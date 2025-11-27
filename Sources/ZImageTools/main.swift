@@ -8,7 +8,7 @@ struct ZImageTools: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "z-image-tools",
         abstract: "Utilities for fetching and converting Z-Image weights.",
-        subcommands: [Fetch.self, Convert.self, ManifestCmd.self, Bench.self],
+        subcommands: [Fetch.self, Convert.self, ManifestCmd.self, Bench.self, DumpEncoder.self],
         defaultSubcommand: Fetch.self
     )
 }
@@ -132,5 +132,52 @@ struct Bench: AsyncParsableCommand {
         }
         let total = Date().timeIntervalSince(start)
         print(String(format: "Bench wrote %d images to %@ in %.2fs", iterations, tmp.path, total))
+    }
+}
+
+/// Debug helper: run the Qwen3 encoder and print stats for given token ids.
+struct DumpEncoder: ParsableCommand {
+    static let configuration = CommandConfiguration(abstract: "Run Qwen3 encoder and print tensor stats.")
+
+    @Option(name: .long, help: "Path to weights directory (expects text_encoder shards and config.json).")
+    var weightsDir: String = ".cache/hf/Z-Image-Turbo/text_encoder"
+
+    @Option(name: .long, parsing: .upToNextOption, help: "Comma-separated token ids (overrides tokensFile).")
+    var tokens: [Int] = []
+
+    @Option(name: .long, help: "Path to JSON file containing token_ids_32 (fixture default).")
+    var tokensFile: String = "Tests/fixtures/zimage_model_fixtures.json"
+
+    func run() throws {
+        let weightsURL = URL(fileURLWithPath: NSString(string: weightsDir).expandingTildeInPath)
+        let cfgURL = weightsURL.appendingPathComponent("config.json")
+        let cfg = try TextEncoderConfig.load(from: cfgURL)
+        let weights = try WeightLoader.loadShardedSafetensors(
+            at: weightsURL,
+            indexFile: "model.safetensors.index.json"
+        )
+        let encoder = Qwen3Encoder(weights: weights, config: cfg)
+
+        let ids: [Int]
+        if !tokens.isEmpty {
+            ids = tokens
+        } else {
+            let data = try Data(contentsOf: URL(fileURLWithPath: tokensFile))
+            let json = try JSONSerialization.jsonObject(with: data) as! [String: Any]
+            ids = (json["token_ids_32"] as! [Int])
+        }
+
+        let out = encoder.encode(ids: Array(ids.prefix(32)), stream: .cpu)
+        let mean = out.mean().item(Double.self)
+        let stdVal = MLX.std(out).item(Double.self)
+        print(String(format: "shape %@ mean %.6f std %.6f", out.shape.description, mean, stdVal))
+        let slice = out[0, 0..<4, 0..<4]
+        for i in 0..<4 {
+            var row: [Double] = []
+            for j in 0..<4 {
+                row.append(slice[i, j].item(Double.self))
+            }
+            print(row)
+        }
     }
 }
