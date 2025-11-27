@@ -84,6 +84,13 @@ z-image-mps -p "Nordic fjord at dawn, misty" --num-images 3 --seed 123
 z-image-mps -p "A futuristic tram in the rain" --attention-backend flash2 --compile
 ```
 
-## Why “MPS”?
+## Demo output
+
+| Prompt | Image |
+|--------|-------|
+| A magical forest with magical tress and magical mushrooms | ![Magical Forest](magicalforest.png) |
+| Default prompt (Hanfu) | ![Sample](sample.png) |
+
+## Why "MPS"?
 
 The original `qwen-image-mps` project focused on making Apple Silicon a first-class citizen. This repo keeps the same spirit: MPS when available, CUDA when present, CPU as a fallback. Everything is packaged to work smoothly with `uv` so you can try Z-Image quickly on a MacBook or GPU box.
