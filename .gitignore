@@ -5,3 +5,4 @@ output/
 uv.lock
 .build/
 .cache/
+.venv312/
