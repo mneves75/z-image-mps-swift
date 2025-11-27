@@ -68,3 +68,5 @@ Dependencies: T-1 before others; T-2 before T-3; T-4/5 before T-7; T-6 before T-
 - Logging enabled and optional prompt logging off by default.
 - Docs updated (README, this spec) with prerequisites and commands.
 
+
+Note: Default HF revision can be pinned via --revision or env HUGGINGFACE_REVISION.
