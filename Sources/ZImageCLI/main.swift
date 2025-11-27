@@ -4,11 +4,12 @@ import ZImageCore
 import MLX
 import MLXNN
 
-@main
 struct ZImageCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "z-image-cli",
-        abstract: "Run Z-Image Turbo locally via MLX (placeholder pipeline for now)."
+        abstract: "Run Z-Image Turbo locally via MLX (placeholder pipeline for now).",
+        subcommands: [Smoke.self],
+        defaultSubcommand: nil
     )
 
     @Option(name: [.customShort("p"), .long], help: "Text prompt.")
