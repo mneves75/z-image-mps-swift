@@ -1,6 +1,8 @@
 import Foundation
 import ArgumentParser
 import ZImageCore
+import MLX
+import MLXNN
 
 @main
 struct ZImageCommand: AsyncParsableCommand {

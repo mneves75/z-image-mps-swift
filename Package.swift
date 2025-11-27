@@ -50,9 +50,10 @@ let package = Package(
         ),
         .testTarget(
             name: "ZImageTests",
-            dependencies: ["ZImageCore", "ZImageCLI"],
+            dependencies: ["ZImageCore"],
             swiftSettings: [
-                .unsafeFlags(["-warnings-as-errors"])
+                .unsafeFlags(["-warnings-as-errors"]),
+                .define("TESTING")
             ]
         )
     ]
