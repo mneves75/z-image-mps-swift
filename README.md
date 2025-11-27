@@ -15,7 +15,7 @@ Swift 6 CLI + tools (MLX-Swift) live in `Package.swift`:
 - `z-image-cli`: ArgumentParser CLI with parity-tested Qwen3 text encoder. Includes `smoke` subcommand to sanity-check cached weights:  
   `z-image-cli smoke --weights ~/.cache/z-image-mlx/converted --prompt "hello world"`.
 - `z-image-tools`: utilities:  
-  `fetch` (HF download, default Tongyi-MAI/Z-Image-Turbo, optional `--revision <commit>`),  
+  `fetch` (HF download, default Tongyi-MAI/Z-Image-Turbo, optional `--revision <commit>` or env `HUGGINGFACE_REVISION`),  
   `convert` (cast/copy safetensors, write `manifest.json`),  
   `manifest` (recompute SHA256 manifest),  
   `bench` (placeholder IO benchmark).

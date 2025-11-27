@@ -22,14 +22,15 @@ struct Fetch: ParsableCommand {
     @Option(name: .long, help: "Model repo (HF).")
     var repo: String = "Tongyi-MAI/Z-Image-Turbo"
 
-    @Option(name: .long, help: "Specific revision/commit to pin (default: latest).")
+    @Option(name: .long, help: "Specific revision/commit to pin (default: env HUGGINGFACE_REVISION or latest).")
     var revision: String?
 
     func run() throws {
         let expanded = NSString(string: output).expandingTildeInPath
         try FileManager.default.createDirectory(atPath: expanded, withIntermediateDirectories: true)
+        let rev = revision ?? ProcessInfo.processInfo.environment["HUGGINGFACE_REVISION"]
         var cmd = "huggingface-cli download \(repo) --local-dir \(expanded) --include \"*\" --resume-download"
-        if let rev = revision { cmd += " --revision \(rev)" }
+        if let rev { cmd += " --revision \(rev)" }
         print("→ \(cmd)")
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/bin/zsh")
