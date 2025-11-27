@@ -6,3 +6,6 @@ uv.lock
 .build/
 .cache/
 .venv312/
+.cache/huggingface/
+.swiftpm/
+.python-version

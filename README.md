@@ -9,6 +9,26 @@ Generate images locally with **Tongyi-MAI/Z-Image-Turbo** using a tiny CLI that 
 - Optional `torch.compile`, FlashAttention 2/3 switches, and CPU offload (CUDA)
 - `uv`-first: run without installing, or install/edit via `uv pip install -e .`
 
+## Swift MLX CLI (new, WIP)
+
+A native Swift 6 CLI scaffold lives in `Package.swift` with targets:
+- `z-image-cli`: ArgumentParser-based CLI (currently writes deterministic placeholder PNGs; pipeline wiring for MLX to follow).
+- `z-image-tools`: utilities:
+  - `fetch` downloads a HF repo (default Tongyi-MAI/Z-Image-Turbo) via `huggingface-cli`.
+  - `convert` copies relevant files and writes integrity `manifest.json` (conversion to MLX tensors pending).
+  - `manifest` regenerates a SHA256 manifest for any directory.
+  - `bench` runs a quick placeholder IO benchmark.
+- Integrity guard: the CLI can be pointed at a weights directory with `manifest.json`; it will verify hashes before generation (currently placeholder image writer until MLX pipeline lands).
+- Core utilities in `ZImageCore` for dimension validation, device selection, seeding, and output naming.
+
+Build & test:
+```bash
+swift test      # runs Swift Testing suite
+swift build -c release
+```
+
+See `DOCS/engineering-spec-mlx-swift-cli.md` for the detailed migration plan to a full MLX-powered pipeline.
+
 ## Quick start
 
 1) Install Python 3.10+ and ensure you have PyTorch with the right backend (MPS or CUDA).
