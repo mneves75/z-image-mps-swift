@@ -11,15 +11,16 @@ Generate images locally with **Tongyi-MAI/Z-Image-Turbo** using a tiny CLI that 
 
 ## Swift MLX CLI (new, WIP)
 
-A native Swift 6 CLI scaffold lives in `Package.swift` with targets:
-- `z-image-cli`: ArgumentParser-based CLI (currently writes deterministic placeholder PNGs; pipeline wiring for MLX to follow).
-- `z-image-tools`: utilities:
-  - `fetch` downloads a HF repo (default Tongyi-MAI/Z-Image-Turbo) via `huggingface-cli`.
-  - `convert` copies relevant files and writes integrity `manifest.json` (conversion to MLX tensors pending).
-  - `manifest` regenerates a SHA256 manifest for any directory.
-  - `bench` runs a quick placeholder IO benchmark.
-- Integrity guard: the CLI can be pointed at a weights directory with `manifest.json`; it will verify hashes before generation (currently placeholder image writer until MLX pipeline lands).
-- Core utilities in `ZImageCore` for dimension validation, device selection, seeding, and output naming.
+Swift 6 CLI + tools (MLX-Swift) live in `Package.swift`:
+- `z-image-cli`: ArgumentParser CLI with parity-tested Qwen3 text encoder. Includes `smoke` subcommand to sanity-check cached weights:  
+  `z-image-cli smoke --weights ~/.cache/z-image-mlx/converted --prompt "hello world"`.
+- `z-image-tools`: utilities:  
+  `fetch` (HF download, default Tongyi-MAI/Z-Image-Turbo, optional `--revision <commit>`),  
+  `convert` (cast/copy safetensors, write `manifest.json`),  
+  `manifest` (recompute SHA256 manifest),  
+  `bench` (placeholder IO benchmark).
+- Integrity guard: CLI verifies `manifest.json` + required files before running.
+- `ZImageCore` holds tokenizer/Qwen3 encoder, scheduler, dimension validation, device selection, seeding, output naming.
 
 Build & test:
 ```bash
